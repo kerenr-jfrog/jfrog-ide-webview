@@ -13,7 +13,9 @@ import {
 	IIaCPage,
 	IReference,
 	ISecretsPage,
-	PageType
+	PageType,
+	Applicability,
+	IExtendedInformation
 } from '../../../model'
 import PublicSources from '../../Page/Dependency/Navigator/page/PublicSources'
 import Research from '../../Page/Dependency/Navigator/page/Research'
@@ -23,7 +25,7 @@ import { TreeNode } from '../../../model/treeNode'
 import { toTreeNode } from '../../../utils/utils'
 import WhatCanIDoTab from './WhatCanIDoTab'
 import Markdown from '../Markdown/Markdown'
-import ApplicabilityEvidence from './ApplicabilityEvidence'
+import ApplicabilityEvidence from './ApplicabilityEvidence/ApplicabilityEvidence'
 
 export const TABS = {
 	WHAT_CAN_I_DO: {
@@ -86,6 +88,10 @@ function InformationTabs(props: Props): JSX.Element {
 			setTreeNode(toTreeNode(impactGraph.root))
 		}
 	}, [impactGraph])
+
+	useEffect(() => {
+		setSelectedTabIndex(defaultTab)
+	}, [props.data, defaultTab])
 
 	const handleChange = (event: React.SyntheticEvent, newValue: string): void => {
 		setSelectedTabIndex(newValue)
@@ -244,8 +250,13 @@ function InformationTabs(props: Props): JSX.Element {
 								</h1>
 							}
 						>
-							{/* @ts-ignore*/}
-							<Research data={(props.data as IDependencyPage).extendedInformation} />
+							<Research
+								data={(props.data as IDependencyPage).extendedInformation as IExtendedInformation}
+								isApplicable={
+									pageTypeDependency.cve?.applicableData?.applicability ===
+									Applicability.NOT_APPLICABLE
+								}
+							/>
 						</Collapse>
 					)}
 					<br />
